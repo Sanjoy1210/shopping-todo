@@ -4,19 +4,17 @@ import { Feather, Entypo } from "@expo/vector-icons";
 
 export default function SearchField() {
 
-  const [products, setProducts] = useState(["Milk", "Coffee", "Oranges", "Bread"]);
+  const [products, setProducts] = useState(["Milk", "Orange", "Coffee", "Bread"]);
   const [searchText, setSearchText] = useState("");
   const [filterProducts, setFilterProducts] = useState([]);
-  const [isClear, setIsClear] = useState(false);
 
   const handleChange = e => {
-    setSearchText(e.target.value);
+    setSearchText(e.target.value.toLowerCase());
   }
 
-  const handleOnPress = () => {
+  const handleOnPress = (e) => {
     const product = [...products, searchText];
     setProducts(product);
-    setIsClear(true);
     setSearchText("");
   }
 
@@ -24,6 +22,11 @@ export default function SearchField() {
     const newProducts = products.filter(pd => pd.toLowerCase().includes(searchText));
     setFilterProducts(newProducts);
   }, [searchText])
+
+  const handleDelete = id => {
+    const newProducts = filterProducts.filter((pd, index) => (pd + index.toString()) !== id)
+    setFilterProducts(newProducts);
+  }
 
   return (
     <Box>
@@ -52,7 +55,8 @@ export default function SearchField() {
             onPress={handleOnPress}
             backgroundColor="#6200ee"
             icon={
-              <Icon as={Feather} name="plus" size="sm" color="warmGray.50" />}
+              <Icon as={Feather} name="plus" size="sm" color="warmGray.50" />
+            }
           />
         </Flex>
         <VStack space={2} mt="4">
@@ -62,10 +66,16 @@ export default function SearchField() {
                 w="100%"
                 key={product + index.toString()}
               >
-                <Text
-                  mx="3"
-                >
-                  {product}
+                <Text mx="3">
+                  {product} <IconButton
+                    borderRadius="sm"
+                    variant="solid"
+                    onPress={() => handleDelete(product + index.toString())}
+                    backgroundColor="#6200ee"
+                    icon={
+                      <Icon as={Feather} name="minus" size="sm" color="warmGray.50" />
+                    }
+                  />
                 </Text>
               </HStack>
             ))
